@@ -1,0 +1,123 @@
+# 1. Create a rider
+POST http://localhost:8080/api/riders
+Content-Type: application/json
+{
+  "name": "Alex Johnson",
+  "email": "alex@example.com",
+  "phone": "5551112222",
+  "paymentMethod": "DEBIT_CARD"
+}
+# Save the rider_id from response
+
+# 2. Create two drivers
+POST http://localhost:8080/api/drivers
+Content-Type: application/json
+{
+  "name": "Maria Silva",
+  "email": "maria@example.com",
+  "phone": "5553334444",
+  "licenseNumber": "DL789012",
+  "vehicleModel": "Honda Civic",
+  "vehiclePlate": "XYZ789"
+}
+# Save as driver_id_1
+
+POST http://localhost:8080/api/drivers
+Content-Type: application/json
+{
+  "name": "Carlos Rodriguez",
+  "email": "carlos@example.com",
+  "phone": "5555556666",
+  "licenseNumber": "DL345678",
+  "vehicleModel": "Ford Focus",
+  "vehiclePlate": "DEF456"
+}
+# Save as driver_id_2
+
+# 3. Update drivers' locations
+PUT http://localhost:8080/api/drivers/{driver_id_1}/location
+Content-Type: application/json
+{
+  "latitude": 42.6990,
+  "longitude": 23.3230,
+  "address": "Sofia Mall"
+}
+
+PUT http://localhost:8080/api/drivers/{driver_id_2}/location
+Content-Type: application/json
+{
+  "latitude": 42.6970,
+  "longitude": 23.3200,
+  "address": "Sofia Stadium"
+}
+
+# 4. Request a ride
+POST http://localhost:8080/api/rides
+Content-Type: application/json
+{
+  "riderId": "{rider_id}",
+  "pickupLatitude": 42.6985,
+  "pickupLongitude": 23.3220,
+  "pickupAddress": "Sofia Hotel",
+  "destLatitude": 42.6505,
+  "destLongitude": 23.3877,
+  "destAddress": "Sofia Airport"
+}
+# Save as ride_id_1
+
+# 5. Find nearby drivers
+GET http://localhost:8080/api/drivers/nearby?latitude=42.6985&longitude=23.3220&maxDistanceInMeters=5000
+
+# 6. Assign closest driver
+POST http://localhost:8080/api/rides/{ride_id_1}/assign-driver
+Content-Type: application/json
+{
+  "driverId": "{driver_id_1}"
+}
+
+# 7. Check driver availability (should be false since assigned)
+GET http://localhost:8080/api/drivers/nearby?latitude=42.6985&longitude=23.3220&maxDistanceInMeters=5000
+
+# 8. Rider cancels the ride
+PUT http://localhost:8080/api/rides/{ride_id_1}/status
+Content-Type: application/json
+{
+  "status": "CANCELLED"
+}
+
+# 9. Check driver availability again (should be true after cancellation)
+GET http://localhost:8080/api/drivers/nearby?latitude=42.6985&longitude=23.3220&maxDistanceInMeters=5000
+
+# 10. Request another ride
+POST http://localhost:8080/api/rides
+Content-Type: application/json
+{
+  "riderId": "{rider_id}",
+  "pickupLatitude": 42.6985,
+  "pickupLongitude": 23.3220,
+  "pickupAddress": "Sofia Hotel",
+  "destLatitude": 42.6505,
+  "destLongitude": 23.3877,
+  "destAddress": "Sofia Airport"
+}
+# Save as ride_id_2
+
+# 11. Assign second driver
+POST http://localhost:8080/api/rides/{ride_id_2}/assign-driver
+Content-Type: application/json
+{
+  "driverId": "{driver_id_2}"
+}
+
+# 12. Complete ride flow
+PUT http://localhost:8080/api/rides/{ride_id_2}/status
+Content-Type: application/json
+{
+  "status": "PICKED_UP"
+}
+
+PUT http://localhost:8080/api/rides/{ride_id_2}/status
+Content-Type: application/json
+{
+  "status": "COMPLETED"
+}

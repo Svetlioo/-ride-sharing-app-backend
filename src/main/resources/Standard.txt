@@ -1,0 +1,84 @@
+# 1. Create a rider
+POST http://localhost:8080/api/riders
+Content-Type: application/json
+{
+  "name": "Jane Smith",
+  "email": "jane@example.com",
+  "phone": "5551234567",
+  "paymentMethod": "CREDIT_CARD"
+}
+# Save the rider_id from response
+680070d65e6dd8324ca43de3
+
+# 2. Create a driver
+POST http://localhost:8080/api/drivers
+Content-Type: application/json
+{
+  "name": "John Driver",
+  "email": "john@example.com",
+  "phone": "5557654321",
+  "licenseNumber": "DL123456",
+  "vehicleModel": "Toyota Camry",
+  "vehiclePlate": "ABC123"
+}
+# Save the driver_id from response
+680070f05e6dd8324ca43de4
+
+# 3. Set driver location
+PUT http://localhost:8080/api/drivers/{driver_id}/location
+Content-Type: application/json
+{
+  "latitude": 42.6977,
+  "longitude": 23.3219,
+  "address": "Sofia City Center"
+}
+
+# 4. Request a ride
+POST http://localhost:8080/api/rides
+Content-Type: application/json
+{
+  "riderId": "{rider_id}",
+  "pickupLatitude": 42.6980,
+  "pickupLongitude": 23.3225,
+  "pickupAddress": "Sofia Central Square",
+  "destLatitude": 42.7057,
+  "destLongitude": 23.3245,
+  "destAddress": "Sofia Business Park"
+}
+# Save the ride_id from response
+
+# 5. Find and assign a driver
+GET http://localhost:8080/api/drivers/nearby?latitude=42.6980&longitude=23.3225&maxDistanceInMeters=5000
+
+# 6. Assign the driver
+POST http://localhost:8080/api/rides/{ride_id}/assign-driver
+Content-Type: application/json
+{
+  "driverId": "{driver_id}"
+}
+
+# 7. Driver picks up rider
+PUT http://localhost:8080/api/rides/{ride_id}/status
+Content-Type: application/json
+{
+  "status": "PICKED_UP"
+}
+
+# 8. Check ride price
+GET http://localhost:8080/api/rides/{ride_id}/price
+
+# 9. Complete ride
+PUT http://localhost:8080/api/rides/{ride_id}/status
+Content-Type: application/json
+{
+  "status": "COMPLETED"
+}
+
+# 10. Check payment transaction
+GET http://localhost:8080/api/transactions/ride/{ride_id}
+
+# 11. Check ride history
+GET http://localhost:8080/api/rides/rider/{rider_id}
+GET http://localhost:8080/api/rides/driver/{driver_id}
+
+
